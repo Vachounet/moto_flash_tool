@@ -1,0 +1,20 @@
+{
+  "name": "moto_flash_tool",
+  "version": "0.2",
+  "description": "CLI tool to download and flash stock firmwares",
+  "main": "index.js",
+  "author": "vachounet",
+  "license": "ISC",
+  "dependencies": {
+    "cli-progress": "^3.9.0",
+    "eslint-config-node": "^4.1.0",
+    "extract-zip": "^2.0.1",
+    "inquirer": "^7.3.3",
+    "mongojs": "^3.1.0",
+    "request": "^2.88.2",
+    "xml-parser": "^1.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.20.0"
+  }
+}
