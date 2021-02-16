@@ -183,11 +183,8 @@ async function flash_firmware(file) {
       )
         continue;
 
-        if (
-          steps[i].attributes.filename.includes("gpt") &&
-          (await isUserspace())
-        )
-          continue;
+      if (steps[i].attributes.filename.includes("gpt") && (await isUserspace()))
+        continue;
 
       console.log(
         "\nFlashing " +
@@ -212,10 +209,13 @@ async function flash_firmware(file) {
   // Flash duper partitions to slot B
   if (isSuperDevice) {
     // Flash super.img if fastbootd mode
-    const result = await fastbootExec({
-      cmd: "flash super " + firmwareFolder + "/super.img",
-    });
-    console.log(result);
+    if (await isUserspace()) {
+      const result = await fastbootExec({
+        cmd: "flash super " + firmwareFolder + "/super.img",
+      });
+
+      console.log(result);
+    }
 
     await flashSuperBPartitions(firmwareFolder);
   }
