@@ -56,14 +56,14 @@ async function flash_firmware(file) {
     steps.filter(
       (step) =>
         step.attributes.filename && step.attributes.filename.includes("super")
-    ).lenth > 0;
+    ).length > 0;
 
   const isABDevice =
     steps.filter(
       (step) =>
         step.attributes.filename &&
         step.attributes.filename.includes("system_a")
-    ).lenth > 0;
+    ).length > 0;
 
   // Unsparse and extract super images for
   // devices with dynamic partitions
