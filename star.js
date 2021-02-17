@@ -31,11 +31,13 @@ async function copyStarBinary(destination) {
 
   if (process.platform === "linux") {
     starBinary = path.resolve("linux", "star");
+    destination = destination + '/' + starBinary.split('/').pop()
   } else if (process.platform === "win32") {
     starBinary = path.resolve("windows", "star.exe");
+    destination = destination + '\\' + starBinary.split('\\').pop();
   }
 
-  destination = destination + '/' + starBinary.split('/').pop()
+  
 
   await copyFile(starBinary, destination);
 }
