@@ -38,7 +38,7 @@ async function extractSuper(firmwareFolder) {
 }
 
 async function flashSuperBPartitions(firmwareFolder) {
-  if (!isUserspace()) {
+  if (!await isUserspace()) {
     console.log("\nReboot to fastbootd");
     await fastbootExec({ cmd: "reboot fastboot" });
     while (true) {
