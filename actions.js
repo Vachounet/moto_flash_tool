@@ -1,3 +1,4 @@
+/* eslint-disable import/no-commonjs */
 const fs = require("fs");
 const colors = require("colors");
 const inquirer = require("inquirer");
@@ -10,7 +11,7 @@ function flash() {
       console.log(
         "Put one manually or use Check firmwares from main menu\n".brightRed
       );
-      require("./prompt").show_menu();
+      require("./prompt").show_menu(true);
       return;
     }
 
@@ -24,7 +25,7 @@ function flash() {
 
     files.forEach((file) => {
       menu.choices.push({
-        name: file + '\n',
+        name: file + "\n",
       });
     });
 
@@ -35,7 +36,7 @@ function flash() {
 
     inquirer.prompt([menu]).then(async (answers) => {
       if (answers.firmware === "main_menu") {
-        require("./prompt").show_menu();
+        require("./prompt").show_menu(true);
       } else {
         flash_firmware(answers.firmware);
       }
@@ -45,7 +46,7 @@ function flash() {
 
 async function check_firmware() {
   const { adbExec } = require("./adb");
-  const fastboot = require("./fastboot");
+  const { fastbootExec } = require("./fastboot");
   const { show_menu, show_firmwares } = require("./prompt");
   const firmware_request = require("./firmware_check");
   let sku, result;
@@ -54,14 +55,14 @@ async function check_firmware() {
       cmd: "shell getprop ro.boot.hardware.sku",
     });
   } catch (e) {
-    result = await fastboot({ cmd: "getvar sku" });
+    result = await fastbootExec({ cmd: "getvar sku" });
     sku = result.split("sku: ")[1].split("\n")[0].trim();
     firmware_request("sku", sku, (firmwares) => {
       if (firmwares && firmwares.length > 0) {
         show_firmwares(firmwares);
       } else {
         console.log("No firmwares found.");
-        show_menu();
+        show_menu(true);
       }
     });
     return;
@@ -72,7 +73,7 @@ async function check_firmware() {
       show_firmwares(firmwares);
     } else {
       console.log("No firmwares found.");
-      show_menu();
+      show_menu(true);
     }
   });
 }

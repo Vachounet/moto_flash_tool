@@ -62,7 +62,7 @@ function show_firmwares(firmwares) {
     menu.choices.push({
       name:
         firmware.carrierName.join(" ") +
-        " :\n " +
+        " :\n  " +
         firmware.name.split("_subsi")[0] +
         "\n",
       value: firmware.url,
@@ -76,7 +76,7 @@ function show_firmwares(firmwares) {
 
   inquirer.prompt(menu).then((answers) => {
     if (answers.firmware === "main_menu") {
-      show_menu();
+      show_menu(true);
     } else {
       const download = require("./download");
       if (
@@ -89,12 +89,12 @@ function show_firmwares(firmwares) {
           path.resolve("firmware", answers.firmware.split("/").pop()),
           () => {
             console.log("Firmwared downloaded");
-            show_menu();
+            show_menu(true);
           }
         );
       } else {
         console.log("Firmware already downloaded");
-        show_menu();
+        show_menu(true);
       }
     }
   });
