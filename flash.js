@@ -12,6 +12,7 @@ const { extractFirmware } = require("./extract");
 const util = require("util");
 const readFile = util.promisify(fs.readFile);
 const { starExec, copyStarBinary, moveStarFiles } = require("./star");
+const { show_menu } = require("./prompt");
 
 async function flash_firmware(file) {
   const firmwarePath = path.resolve("firmware");
@@ -259,14 +260,13 @@ async function flash_firmware(file) {
           console.log(
             "\nDone. You can now reboot your device or flash a custom ROM"
           );
-          process.exit(0);
           break;
         case "no":
           console.log(
             "\nDone. You can now reboot your device or flash a custom ROM"
           );
-          process.exit(0);
       }
+      require("./prompt").show_menu();
     });
 }
 
