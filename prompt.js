@@ -5,27 +5,33 @@ const { adbExec } = require("./adb");
 
 const { flash, check_firmware } = require("./actions");
 
-function show_menu() {
+function show_menu(deviceConnected) {
+  const choices = [];
+  if (deviceConnected) {
+    choices.push(
+      {
+        name: "Flash stock firmware",
+        value: "flash",
+      },
+      {
+        name: "Check firmwares for my device",
+        value: "check_firmware",
+      }
+    );
+  }
+
+  choices.push({
+    name: "Exit",
+    value: "exit",
+  });
+
   inquirer
     .prompt([
       {
         type: "list",
         message: "Select an action",
         name: "action",
-        choices: [
-          {
-            name: "Flash stock firmware",
-            value: "flash",
-          },
-          {
-            name: "Check firmwares for my device",
-            value: "check_firmware",
-          },
-          {
-            name: "Exit",
-            value: "exit",
-          },
-        ],
+        choices,
       },
     ])
     .then((answers) => {

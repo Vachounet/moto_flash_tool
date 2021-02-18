@@ -18,6 +18,8 @@ if (!fs.existsSync("firmware")) {
 async function start_app() {
   await adbExec({ cmd: "start-server" });
   const adbConnected = await hasAdbConnectedDevice();
+  const fbDevices = await fastbootExec({ cmd: "devices" });
+  const fastbootConnected = fbDevices.split("\n").length >= 2;
 
   console.log("\nWelcome to Motorola Flash Tool\n".bold.underline);
 
@@ -63,32 +65,26 @@ async function start_app() {
         })) +
         "\n"
     );
-    console.log('\nCurrent mode: android')
-  } else {
-    const fbDevices = await fastbootExec({ cmd: "devices" });
-    const fastbootConnected = fbDevices.split("\n").length >= 2;
-    const userSpace = await isUserspace()
-    if (fastbootConnected) {
-      console.log("Connected device :".bgBrightWhite.black);
-      console.log(await fastbootExec({ cmd: "getvar product", trim: true }));
-      if (!userSpace) {
-        console.log(await fastbootExec({ cmd: "getvar sku", trim: true }));
-      }
-      console.log(
-        await fastbootExec({ cmd: "getvar current-slot", trim: true })
-      );
-
-      if (!userSpace) {
-        console.log('\nCurrent mode: bootloader')
-      } else {
-        console.log('\nCurrent mode: fastbootd')
-      }
-    } else {
-      console.log("Please connect a device before using the tool.".brightRed);
+    console.log("\nCurrent mode: android");
+  } else if (fastbootConnected) {
+    const userSpace = await isUserspace();
+    console.log("Connected device :".bgBrightWhite.black);
+    console.log(await fastbootExec({ cmd: "getvar product", trim: true }));
+    if (!userSpace) {
+      console.log(await fastbootExec({ cmd: "getvar sku", trim: true }));
     }
+    console.log(await fastbootExec({ cmd: "getvar current-slot", trim: true }));
+
+    if (!userSpace) {
+      console.log("\nCurrent mode: bootloader");
+    } else {
+      console.log("\nCurrent mode: fastbootd");
+    }
+  } else {
+    console.log("Please connect a device before using the tool.".brightRed);
   }
 
-  show_menu();
+  show_menu(fastbootConnected || adbConnected);
 }
 
 start_app();

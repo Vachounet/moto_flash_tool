@@ -16,7 +16,9 @@ async function starExec(filename, folder) {
     starBinary = path.join(folder, "star.exe");
   }
 
-  const { stdout, stderr } = await exec(starBinary + " -f "+folder+"/"+filename+" extract");
+  const { stdout, stderr } = await exec(
+    starBinary + " -f " + folder + "/" + filename + " extract"
+  );
 
   if (stderr) {
     console.error(`stderr: ${stderr}`);
@@ -31,19 +33,17 @@ async function copyStarBinary(destination) {
 
   if (process.platform === "linux") {
     starBinary = path.resolve("linux", "star");
-    destination = destination + '/' + starBinary.split('/').pop()
+    destination = destination + "/" + starBinary.split("/").pop();
   } else if (process.platform === "win32") {
     starBinary = path.resolve("windows", "star.exe");
-    destination = destination + '\\' + starBinary.split('\\').pop();
+    destination = destination + "\\" + starBinary.split("\\").pop();
   }
-
-  
 
   await copyFile(starBinary, destination);
 }
 
-async function moveStarFiles(oldPath, newPath){
-    await moveFile(oldPath, newPath);
+async function moveStarFiles(oldPath, newPath) {
+  await moveFile(oldPath, newPath);
 }
 
 module.exports = { starExec, copyStarBinary, moveStarFiles };
