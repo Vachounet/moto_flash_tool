@@ -1,46 +1,63 @@
 /* eslint-disable import/no-commonjs */
-const fs = require("fs");
 const colors = require("colors");
 const inquirer = require("inquirer");
 const flash_firmware = require("./flash");
+const util = require("util");
+const { Separator } = require("inquirer");
+const readdir = util.promisify(require("fs").readdir);
 
-function flash() {
-  fs.readdir("firmware", (err, files) => {
-    if (!files || files.length === 0) {
-      console.log("\nNo firmwares found in the firmware folder".brightRed);
-      console.log(
-        "Put one manually or use Check firmwares from main menu\n".brightRed
-      );
-      require("./prompt").show_menu(true);
-      return;
-    }
+async function flash() {
+  const firmwareContent = await readdir("firmware", { withFileTypes: true });
 
-    const menu = {
-      type: "list",
-      message: "Select a file/folder",
-      name: "firmware",
-      pageSize: 500,
-      choices: [],
-    };
+  const dirs = firmwareContent.filter((dir) => dir.isDirectory());
+  const files = firmwareContent.filter((file) => file.isFile());
 
-    files.forEach((file) => {
-      menu.choices.push({
-        name: file + "\n",
-      });
-    });
+  if (files.length === 0 || dirs.length === 0) {
+    console.log("\nNo firmwares found in the firmware folder".brightRed);
+    console.log(
+      "Put one manually or use Check firmwares from main menu\n".brightRed
+    );
+    require("./prompt").show_menu(true);
+    return;
+  }
 
+  const menu = {
+    type: "list",
+    message: "Select a file/folder",
+    name: "firmware",
+    pageSize: 500,
+    choices: [],
+  };
+
+  menu.choices.push(new Separator("Folders"));
+
+  dirs.forEach((dir) => {
     menu.choices.push({
-      name: "Back to main menu\n",
-      value: "main_menu",
+      name: dir.name,
     });
+  });
 
-    inquirer.prompt([menu]).then(async (answers) => {
-      if (answers.firmware === "main_menu") {
-        require("./prompt").show_menu(true);
-      } else {
-        flash_firmware(answers.firmware);
-      }
+  menu.choices.push(new Separator("Files"));
+
+  files.forEach((file) => {
+    menu.choices.push({
+      name: file.name,
     });
+  });
+
+  menu.choices.push(new Separator());
+
+  menu.choices.push({
+    name: "Back to main menu\n",
+    value: "main_menu",
+  });
+
+  inquirer.prompt([menu]).then(async (answers) => {
+    if (answers.firmware === "main_menu") {
+      require("./prompt").show_menu(true);
+    } else {
+      flash_firmware(answers.firmware);
+    }
   });
 }
 
