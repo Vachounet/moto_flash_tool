@@ -102,9 +102,13 @@ async function flash_firmware(file) {
   // partitions to both slot
   if (fs.existsSync(firmwareFolder + "/bootloader.img")) {
     await starExec("bootloader.img", firmwareFolder);
-    const bootloaderFiles = await readFile(
-      path.resolve("bootloader.default.xml")
-    );
+    let bootloaderFiles;
+    try {
+      bootloaderFiles = await readFile(path.resolve("bootloader.default.xml"));
+    } catch (e) {
+      // Fall back to default.xml
+      bootloaderFiles = await readFile(path.resolve("default.xml"));
+    }
 
     const mbns = parse(bootloaderFiles.toString());
     for (let m = 0; m < mbns.root.children.length; m++) {
@@ -138,7 +142,13 @@ async function flash_firmware(file) {
   // partitions to both slot
   if (fs.existsSync(firmwareFolder + "/radio.img")) {
     await starExec("radio.img", firmwareFolder);
-    const radioFiles = await readFile(path.resolve("radio.default.xml"));
+    let radioFiles;
+    try {
+      radioFiles = await readFile(path.resolve("radio.default.xml"));
+    } catch (e) {
+      // Fall back to default.xml
+      radioFiles = await readFile(path.resolve("default.xml"));
+    }
 
     const radios = parse(radioFiles.toString());
     for (let m = 0; m < radios.root.children.length; m++) {
