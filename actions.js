@@ -12,7 +12,7 @@ async function flash() {
   const dirs = firmwareContent.filter((dir) => dir.isDirectory());
   const files = firmwareContent.filter((file) => file.isFile());
 
-  if (files.length === 0 || dirs.length === 0) {
+  if (files.length === 0 && dirs.length === 0) {
     console.log("\nNo firmwares found in the firmware folder".brightRed);
     console.log(
       "Put one manually or use Check firmwares from main menu\n".brightRed
@@ -29,21 +29,25 @@ async function flash() {
     choices: [],
   };
 
-  menu.choices.push(new Separator("Folders"));
+  if (dirs.length > 0) {
+    menu.choices.push(new Separator("Folders"));
 
-  dirs.forEach((dir) => {
-    menu.choices.push({
-      name: dir.name,
+    dirs.forEach((dir) => {
+      menu.choices.push({
+        name: dir.name,
+      });
     });
-  });
+  }
 
-  menu.choices.push(new Separator("Files"));
+  if (files.length > 0) {
+    menu.choices.push(new Separator("Files"));
 
-  files.forEach((file) => {
-    menu.choices.push({
-      name: file.name,
+    files.forEach((file) => {
+      menu.choices.push({
+        name: file.name,
+      });
     });
-  });
+  }
 
   menu.choices.push(new Separator());
 
