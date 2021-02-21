@@ -2,7 +2,7 @@
 /* eslint-disable no-sync */
 const fs = require("fs");
 const colors = require("colors");
-const { adbExec, hasAdbConnectedDevice } = require("./adb");
+const { adbExec, hasAdbConnectedDevice, loadProperties } = require("./adb");
 const { fastbootExec, isUserspace } = require("./fastboot");
 
 const { show_menu } = require("./prompt");
@@ -28,44 +28,16 @@ async function start_app() {
   );
 
   if (adbConnected) {
+    const properties = await loadProperties();
     console.log("Connected device :".bgBrightWhite.black);
+    console.log("Device : " + properties["ro.boot.device"] + "\n");
+    console.log("SKU : " + properties["ro.boot.hardware.sku"] + "\n");
+    console.log("Carrier : " + properties["ro.boot.carrier"] + "\n");
+    console.log("Current slot : " + properties["ro.boot.slot_suffix"] + "\n");
     console.log(
-      "Device : " +
-        (await adbExec({
-          cmd: "shell getprop ro.boot.device",
-          trim: true,
-        }))
+      "Dynamic partitions : " + properties["ro.boot.dynamic_partitions"] + "\n"
     );
-    console.log(
-      "SKU : " +
-        (await adbExec({
-          cmd: "shell getprop ro.boot.hardware.sku",
-          trim: true,
-        }))
-    );
-    console.log(
-      "Carrier : " +
-        (await adbExec({
-          cmd: "shell getprop ro.boot.carrier",
-          trim: true,
-        }))
-    );
-    console.log(
-      "Current slot : " +
-        (await adbExec({
-          cmd: "shell getprop ro.boot.slot_suffix",
-          trim: true,
-        }))
-    );
-    console.log(
-      "Dynamic partitions : " +
-        (await adbExec({
-          cmd: "shell getprop ro.boot.dynamic_partitions",
-          trim: true,
-        })) +
-        "\n"
-    );
-    console.log("\nCurrent mode: android");
+    console.log("Current mode: Android\n");
   } else if (fastbootConnected) {
     const userSpace = await isUserspace();
     console.log("Connected device :".bgBrightWhite.black);
