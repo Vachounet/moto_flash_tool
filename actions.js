@@ -67,8 +67,7 @@ async function flash() {
         pageSize: 500
       };
       inquirer.prompt([extractMenu]).then((extract) => {
-        console.log(answers.firmware, extract.extract)
-        flash_firmware(extract.firmware, extract.extract);
+        flash_firmware(answers.firmware, extract.extract);
       })
     } else {
       flash_firmware(answers.firmware, false);

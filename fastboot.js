@@ -34,7 +34,33 @@ async function isUserspace() {
     trim: true,
   });
 
-  return userpace.includes('yes')
+  return userpace.includes("yes");
 }
 
-module.exports = { fastbootExec, isUserspace };
+async function loadVariables() {
+  const variables = await fastbootExec({
+    cmd: "getvar all"
+  });
+
+  const lines = variables.split("\n");
+
+  const properties = [];
+
+  lines.forEach((line) => {
+    try {
+      line = line.replace("(bootloader) ", "");
+      const variable = line.split(":")[0].trim();
+      const value = line.split(":")[1].trim();
+
+      if (variable && value) {
+        const propName = variable;
+        properties[propName] = value;
+      }
+    } catch (e) {
+      //term.bold.red("Unable to load property : " + line);
+    }
+  });
+  return properties;
+}
+
+module.exports = { fastbootExec, isUserspace, loadVariables };

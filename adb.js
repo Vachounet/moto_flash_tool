@@ -43,7 +43,7 @@ async function loadProperties() {
       const prop = line.split(":")[0].trim();
       const value = line.split(":")[1].trim();
 
-      if (prop.match(/\[(.*?)\]/) && prop.match(/\[(.*?)\]/)) {
+      if (prop.match(/\[(.*?)\]/) && value.match(/\[(.*?)\]/)) {
         const propName = prop.match(/\[(.*?)\]/)[1]
         properties[propName] = value.match(/\[(.*?)\]/)[1]
       }

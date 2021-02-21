@@ -3,7 +3,7 @@
 const fs = require("fs");
 const colors = require("colors");
 const { adbExec, hasAdbConnectedDevice, loadProperties } = require("./adb");
-const { fastbootExec, isUserspace } = require("./fastboot");
+const { fastbootExec, isUserspace, loadVariables } = require("./fastboot");
 
 const { show_menu } = require("./prompt");
 
@@ -40,12 +40,13 @@ async function start_app() {
     console.log("Current mode: Android\n");
   } else if (fastbootConnected) {
     const userSpace = await isUserspace();
+    const variables = await loadVariables();
     console.log("Connected device :".bgBrightWhite.black);
-    console.log(await fastbootExec({ cmd: "getvar product", trim: true }));
+    console.log("Device : " + variables.product);
     if (!userSpace) {
-      console.log(await fastbootExec({ cmd: "getvar sku", trim: true }));
+      console.log("SKU : " + variables.sku);
     }
-    console.log(await fastbootExec({ cmd: "getvar current-slot", trim: true }));
+    console.log("Current slot : " + variables["current-slot"]);
 
     if (!userSpace) {
       console.log("\nCurrent mode: bootloader");
