@@ -1,3 +1,4 @@
+/* eslint-disable import/no-commonjs */
 const path = require("path");
 const util = require("util");
 
@@ -30,4 +31,28 @@ async function hasAdbConnectedDevice() {
   return outputLength === 4;
 }
 
-module.exports = { adbExec, hasAdbConnectedDevice };
+async function loadProperties() {
+  const getprop = await adbExec({ cmd: "shell getprop" });
+
+  const lines = getprop.split("\n");
+
+  const properties = [];
+
+  lines.forEach((line) => {
+    try {
+      const prop = line.split(":")[0].trim();
+      const value = line.split(":")[1].trim();
+
+      if (prop.match(/\[(.*?)\]/) && prop.match(/\[(.*?)\]/)) {
+        const propName = prop.match(/\[(.*?)\]/)[1]
+        properties[propName] = value.match(/\[(.*?)\]/)[1]
+      }
+    } catch (e) {
+      //term.bold.red("Unable to load property : " + line);
+    }
+  });
+
+  return properties;
+}
+
+module.exports = { adbExec, hasAdbConnectedDevice, loadProperties };
