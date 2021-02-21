@@ -85,20 +85,12 @@ async function check_firmware() {
     result = await adbExec({
       cmd: "shell getprop ro.boot.hardware.sku",
     });
+    sku = result.trim();
   } catch (e) {
     result = await fastbootExec({ cmd: "getvar sku" });
     sku = result.split("sku: ")[1].split("\n")[0].trim();
-    firmware_request("sku", sku, (firmwares) => {
-      if (firmwares && firmwares.length > 0) {
-        show_firmwares(firmwares);
-      } else {
-        console.log("No firmwares found.");
-        show_menu(true);
-      }
-    });
-    return;
   }
-  sku = result.trim();
+  
   firmware_request("sku", sku, (firmwares) => {
     if (firmwares && firmwares.length > 0) {
       show_firmwares(firmwares);
