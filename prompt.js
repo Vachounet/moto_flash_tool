@@ -1,3 +1,5 @@
+/* eslint-disable no-sync */
+/* eslint-disable import/no-commonjs */
 const inquirer = require("inquirer");
 const fs = require("fs");
 const path = require("path");
@@ -43,7 +45,7 @@ function show_menu(deviceConnected) {
           check_firmware();
           break;
         case "exit":
-          adbExec({ cmd: "stop-server" });
+          adbExec({ cmd: "kill-server" });
           process.exit(0);
       }
     });
