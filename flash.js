@@ -14,7 +14,7 @@ const readFile = util.promisify(fs.readFile);
 const { starExec, copyStarBinary, moveStarFiles } = require("./star");
 const { show_menu } = require("./prompt");
 
-async function flash_firmware(file) {
+async function flash_firmware(file, extractOnly) {
   const firmwarePath = path.resolve("firmware");
   const folder = file.replace(".zip", "");
 
@@ -119,21 +119,23 @@ async function flash_firmware(file) {
         path.resolve(firmwareFolder, mbn.attributes.filename)
       );
 
-      console.log(
-        "\nFlashing " +
-          mbn.attributes.filename +
-          " to " +
-          mbn.attributes.partition
-      );
+      if (!extractOnly) {
+        console.log(
+          "\nFlashing " +
+            mbn.attributes.filename +
+            " to " +
+            mbn.attributes.partition
+        );
 
-      const result = await fastbootExec({
-        cmd:
-          "flash --slot=all " +
-          mbn.attributes.partition +
-          " " +
-          path.resolve(firmwareFolder, mbn.attributes.filename),
-      });
-      console.log(result);
+        const result = await fastbootExec({
+          cmd:
+            "flash --slot=all " +
+            mbn.attributes.partition +
+            " " +
+            path.resolve(firmwareFolder, mbn.attributes.filename),
+        });
+        console.log(result);
+      }
     }
   }
 
@@ -159,22 +161,30 @@ async function flash_firmware(file) {
         path.resolve(firmwareFolder, radio.attributes.filename)
       );
 
-      console.log(
-        "\nFlashing " +
-          radio.attributes.filename +
-          " to " +
-          radio.attributes.partition
-      );
+      if (!extractOnly) {
+        console.log(
+          "\nFlashing " +
+            radio.attributes.filename +
+            " to " +
+            radio.attributes.partition
+        );
 
-      const result = await fastbootExec({
-        cmd:
-          "flash --slot=all " +
-          radio.attributes.partition +
-          " " +
-          path.resolve(firmwareFolder, radio.attributes.filename),
-      });
-      console.log(result);
+        const result = await fastbootExec({
+          cmd:
+            "flash --slot=all " +
+            radio.attributes.partition +
+            " " +
+            path.resolve(firmwareFolder, radio.attributes.filename),
+        });
+        console.log(result);
+      }
     }
+  }
+
+  if (extractOnly) {
+    console.log("Firmware extracted".green);
+    require("./prompt").show_menu();
+    return;
   }
 
   // Loop on each partition found in servicefile

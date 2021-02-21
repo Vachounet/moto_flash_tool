@@ -59,8 +59,19 @@ async function flash() {
   inquirer.prompt([menu]).then(async (answers) => {
     if (answers.firmware === "main_menu") {
       require("./prompt").show_menu(true);
+    } else if (answers.firmware.includes(".zip")) {
+      const extractMenu = {
+        type: "confirm",
+        message: "Extract only ?",
+        name: "extract",
+        pageSize: 500
+      };
+      inquirer.prompt([extractMenu]).then((extract) => {
+        console.log(answers.firmware, extract.extract)
+        flash_firmware(extract.firmware, extract.extract);
+      })
     } else {
-      flash_firmware(answers.firmware);
+      flash_firmware(answers.firmware, false);
     }
   });
 }

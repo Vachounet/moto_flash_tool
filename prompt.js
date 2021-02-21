@@ -12,7 +12,7 @@ function show_menu(deviceConnected) {
   if (deviceConnected) {
     choices.push(
       {
-        name: "Flash stock firmware",
+        name: "Flash/extract stock firmware",
         value: "flash",
       },
       {
