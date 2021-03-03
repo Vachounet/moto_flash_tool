@@ -97,6 +97,15 @@ async function flash_firmware(file, extractOnly) {
   // Copy star binary to firmware folder
   await copyStarBinary(firmwareFolder);
 
+  // Cleanup previous xmls to avoid wrong picking
+  const rootfiles = fs.readdirSync(path.resolve());
+  const xmlFiles = rootfiles.filter((file) => file.endsWith(".xml"));
+  if (xmlFiles && xmlFiles.length > 0) {
+    xmlFiles.forEach((xml) => {
+      fs.unlinkSync(path.resolve(xml));
+    });
+  }
+
   // If firmware includes bootloader.img
   // extract it using star tool and flash
   // partitions to both slot
