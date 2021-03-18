@@ -13,6 +13,8 @@ async function fastbootExec(options) {
     fastbootBinary = path.resolve("windows", "fastboot.exe");
   }
 
+  fastbootBinary = "\"" + fastbootBinary + "\"";
+
   const { stdout, stderr } = await exec(fastbootBinary + " " + options.cmd);
 
   if (stderr) {

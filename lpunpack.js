@@ -12,6 +12,8 @@ module.exports = async function (options) {
     lpunpackBinary = path.resolve("windows", "superunpack.exe");
   }
 
+  lpunpackBinary = "\"" + lpunpackBinary + "\"";
+
   const { stdout, stderr } = await exec(lpunpackBinary + " " + options.cmd);
 
   if (stderr) {

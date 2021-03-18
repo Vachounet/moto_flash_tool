@@ -12,6 +12,8 @@ module.exports = async function (options, next) {
 		simg2imgBinary = path.resolve("windows", "SparseConverter.exe");
 	}
 
+	simg2imgBinary = "\"" + simg2imgBinary + "\"";
+
 	const { stdout, stderr } = await exec(simg2imgBinary + " " + options.cmd);
 
 	if (stderr) {

@@ -16,6 +16,8 @@ async function starExec(filename, folder) {
     starBinary = path.join(folder, "star.exe");
   }
 
+  starBinary = "\"" + starBinary + "\"";
+
   const { stdout, stderr } = await exec(
     starBinary + " -f " + folder + "/" + filename + " extract"
   );

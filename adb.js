@@ -13,6 +13,8 @@ async function adbExec(options) {
     adbBinary = path.resolve("windows", "adb.exe");
   }
 
+  adbBinary = "\"" + adbBinary + "\"";
+
   const { stdout, stderr } = await exec(adbBinary + " " + options.cmd);
   if (stderr) {
     return stderr;
@@ -44,8 +46,8 @@ async function loadProperties() {
       const value = line.split(":")[1].trim();
 
       if (prop.match(/\[(.*?)\]/) && value.match(/\[(.*?)\]/)) {
-        const propName = prop.match(/\[(.*?)\]/)[1]
-        properties[propName] = value.match(/\[(.*?)\]/)[1]
+        const propName = prop.match(/\[(.*?)\]/)[1];
+        properties[propName] = value.match(/\[(.*?)\]/)[1];
       }
     } catch (e) {
       //term.bold.red("Unable to load property : " + line);
