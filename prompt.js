@@ -7,7 +7,7 @@ const { adbExec } = require("./adb");
 
 const { flash, check_firmware } = require("./actions");
 
-function show_menu(deviceConnected) {
+function show_menu(deviceConnected, sku, carrier) {
   const choices = [];
   if (deviceConnected) {
     choices.push(
@@ -42,7 +42,7 @@ function show_menu(deviceConnected) {
           flash();
           break;
         case "check_firmware":
-          check_firmware();
+          check_firmware(sku, carrier);
           break;
         case "exit":
           adbExec({ cmd: "kill-server" });
@@ -51,7 +51,7 @@ function show_menu(deviceConnected) {
     });
 }
 
-function show_firmwares(firmwares) {
+function show_firmwares(firmwares, sku, carrier) {
   const menu = {
     type: "list",
     message: "Select a firmware to download",
@@ -78,7 +78,7 @@ function show_firmwares(firmwares) {
 
   inquirer.prompt(menu).then((answers) => {
     if (answers.firmware === "main_menu") {
-      show_menu(true);
+      show_menu(true, sku, carrier);
     } else {
       const download = require("./download");
       if (
@@ -91,12 +91,12 @@ function show_firmwares(firmwares) {
           path.resolve("firmware", answers.firmware.split("/").pop()),
           () => {
             console.log("Firmwared downloaded");
-            show_menu(true);
+            show_menu(true, sku, carrier);
           }
         );
       } else {
         console.log("Firmware already downloaded");
-        show_menu(true);
+        show_menu(true, sku, carrier);
       }
     }
   });

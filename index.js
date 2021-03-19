@@ -27,12 +27,17 @@ async function start_app() {
     "Telegram support group: https://t.me/motoflashtool\n".bold.underline
   );
 
+  let sku,
+    carrier = "";
+
   if (adbConnected) {
     const properties = await loadProperties();
     console.log("Connected device :".bgBrightWhite.black);
     console.log("Device : " + properties["ro.boot.device"] + "\n");
     console.log("SKU : " + properties["ro.boot.hardware.sku"] + "\n");
+    sku = properties["ro.boot.hardware.sku"];
     console.log("Carrier : " + properties["ro.boot.carrier"] + "\n");
+    carrier = properties["ro.boot.carrier"];
     console.log("Current slot : " + properties["ro.boot.slot_suffix"] + "\n");
     console.log(
       "Dynamic partitions : " + properties["ro.boot.dynamic_partitions"] + "\n"
@@ -45,6 +50,9 @@ async function start_app() {
     console.log("Device : " + variables.product);
     if (!userSpace) {
       console.log("SKU : " + variables.sku);
+      console.log("Carrier : " + variables["ro.carrier"]);
+      sku = variables.sku;
+      carrier = variables["ro.carrier"];
     }
     console.log("Current slot : " + variables["current-slot"]);
 
@@ -57,7 +65,7 @@ async function start_app() {
     console.log("Please connect a device before using the tool.".brightRed);
   }
 
-  show_menu(fastbootConnected || adbConnected);
+  show_menu(fastbootConnected || adbConnected, sku, carrier);
 }
 
 start_app();

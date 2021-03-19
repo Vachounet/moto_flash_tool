@@ -64,39 +64,32 @@ async function flash() {
         type: "confirm",
         message: "Extract only ?",
         name: "extract",
-        pageSize: 500
+        pageSize: 500,
       };
       inquirer.prompt([extractMenu]).then((extract) => {
         flash_firmware(answers.firmware, extract.extract);
-      })
+      });
     } else {
       flash_firmware(answers.firmware, false);
     }
   });
 }
 
-async function check_firmware() {
-  const { adbExec } = require("./adb");
-  const { fastbootExec } = require("./fastboot");
+async function check_firmware(sku, carrier) {
   const { show_menu, show_firmwares } = require("./prompt");
   const firmware_request = require("./firmware_check");
-  let sku, result;
-  try {
-    result = await adbExec({
-      cmd: "shell getprop ro.boot.hardware.sku",
-    });
-    sku = result.trim();
-  } catch (e) {
-    result = await fastbootExec({ cmd: "getvar sku" });
-    sku = result.split("sku: ")[1].split("\n")[0].trim();
+
+  if (!sku || !carrier) {
+    console.log("Unable to check for firmwares. Missing SKU and/or carrier.".brightRed);
+    process.exit(0);
   }
-  
-  firmware_request("sku", sku, (firmwares) => {
+
+  firmware_request("sku", sku, carrier, (firmwares) => {
     if (firmwares && firmwares.length > 0) {
-      show_firmwares(firmwares);
+      show_firmwares(firmwares, sku, carrier);
     } else {
       console.log("No firmwares found.");
-      show_menu(true);
+      show_menu(true, sku, carrier);
     }
   });
 }
